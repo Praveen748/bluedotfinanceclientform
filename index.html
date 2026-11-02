@@ -321,7 +321,8 @@ function payload(){
     if(!i.name||i.name==="website"||i.name==="service")return;
     const sec=i.closest(".step");
     const inGoalOff=i.closest(".goal")&&!i.closest(".goal").classList.contains("on")&&!i.name.endsWith("_on");
-    if(!vis.has(sec)||inGoalOff||i.closest("[hidden]")){if(!(i.name in d))d[i.name]="";return}
+    const fld=i.closest(".field");const condHidden=fld&&fld.hidden;
+    if(!vis.has(sec)||inGoalOff||condHidden){if(!(i.name in d))d[i.name]="";return}
     if(i.type==="radio"){if(i.checked)d[i.name]=i.value;else if(!(i.name in d))d[i.name]="";return}
     if(i.type==="checkbox"){d[i.name]=i.checked?"Yes":"No";return}
     d[i.name]=i.value.trim();
