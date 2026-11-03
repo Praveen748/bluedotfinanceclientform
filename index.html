@@ -84,7 +84,7 @@
 
   <form id="intakeForm">
 
-    <!-- STEP 1: Main Goal & Book a Call -->
+    <!-- STEP 1: Main Goal Selection + Book a Call -->
     <div class="step active" id="step1">
       <h3>Select Your Requirement</h3>
       <div class="form-group">
@@ -107,7 +107,7 @@
         <button type="button" class="btn-primary" onclick="nextStep(2)">Continue Intake</button>
       </div>
 
-      <!-- BOOK A CALL SECTION -->
+      <!-- FEATURE 1: BOOK A CALL SECTION -->
       <div class="book-call-box">
         <h3>Need Quick Help? Book a Call</h3>
         <p style="font-size: 13px; color: #64748b;">Prefer to speak directly with an advisor instead of filling out the full form?</p>
@@ -128,7 +128,7 @@
       </div>
     </div>
 
-    <!-- STEP 2: Self or Family -->
+    <!-- FEATURE 2: SELF OR FAMILY (Inserted right after Step 1) -->
     <div class="step" id="step2">
       <h3>Who is this coverage/investment for?</h3>
       <div class="form-group">
@@ -147,7 +147,7 @@
       </div>
     </div>
 
-    <!-- STEP 3: Basic Contact Details -->
+    <!-- REMAINING STEPS: Rest of your original intake form -->
     <div class="step" id="step3">
       <h3>Contact Information</h3>
       <div class="form-group">
@@ -173,7 +173,7 @@
 
 <script>
   const CONFIG = {
-    // Replace with your current Google Apps Script /exec URL:
+    // Replace with your production Google Apps Script /exec URL
     endpoint: "https://script.google.com/macros/s/AKfycby0uZw-7H5STpglMEWogrDh5WhAr316A6c_yb6cfHOcPNyFja9xOVRYW0Eh7_mn0dk1ug/exec",
     token: "bd-7Kq29xLm4ZpR83vT"
   };
@@ -192,7 +192,7 @@
     currentStep = stepNumber;
   }
 
-  // Handle Book a Call Direct Submission
+  // Handle Book a Call direct submission to "Book a Call" sheet tab
   function submitCallBooking() {
     const name = document.getElementById('call_name').value;
     const place = document.getElementById('call_place').value;
@@ -216,7 +216,7 @@
     sendData(payload, "Call Request Submitted! We will get back to you shortly.");
   }
 
-  // Handle Full Form Submission
+  // Handle full form submission to "Responses" sheet tab
   function submitFullForm() {
     const form = document.getElementById('intakeForm');
     const formData = new FormData(form);
