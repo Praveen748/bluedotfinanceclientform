@@ -62,7 +62,7 @@ button:disabled{opacity:.5;cursor:wait}
 <form id="f" novalidate autocomplete="off">
 <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off">
 
-<!-- STEP 1: SERVICE CHOICE + FEATURE 1: BOOK A CALL -->
+<!-- STEP 1: SERVICE CHOICE + BOOK A CALL -->
 <section class="card step" data-title="What do you need?" data-for="all">
   <h2>How can we help you today?</h2>
   <p class="sub">Choose one. We will only ask the questions relevant to your choice.</p>
@@ -74,7 +74,7 @@ button:disabled{opacity:.5;cursor:wait}
   <div class="field" data-name="service"><div class="msg">Please choose one option to continue.</div></div>
   <p class="note">Our advice is limited to mutual funds, health insurance and term life insurance. We do not advise on stocks, real estate, PMS or ULIPs.</p>
 
-  <!-- FEATURE 1: BOOK A CALL -->
+  <!-- BOOK A CALL SECTION -->
   <div class="book-call-card">
     <h3>Or Book a Quick Call</h3>
     <p class="sub" style="margin-bottom:12px">Prefer speaking to an advisor directly? Submit your details to schedule a call.</p>
@@ -90,7 +90,7 @@ button:disabled{opacity:.5;cursor:wait}
   </div>
 </section>
 
-<!-- STEP 1.5 (FEATURE 2): TARGET AUDIENCE (SELF VS FAMILY) -->
+<!-- STEP 2: TARGET AUDIENCE (SELF VS FAMILY) -->
 <section class="card step" data-title="Who is this plan for?" data-for="all">
   <h2>Who is this plan for?</h2>
   <p class="sub">Select whether you are setting up this financial discovery for yourself or your family.</p>
@@ -141,7 +141,7 @@ button:disabled{opacity:.5;cursor:wait}
   <div class="calc" id="surplus"></div>
 </section>
 
-<!-- STEP: EXISTING INVESTMENTS (invest/both) -->
+<!-- STEP: EXISTING INVESTMENTS -->
 <section class="card step" data-title="Your existing investments" data-for="invest both">
   <h2>Your existing investments</h2>
   <p class="sub">So we build on what you already have instead of starting from zero.</p>
@@ -154,7 +154,7 @@ button:disabled{opacity:.5;cursor:wait}
   </div>
 </section>
 
-<!-- STEP: HEALTH INSURANCE (insurance/both) -->
+<!-- STEP: HEALTH INSURANCE -->
 <section class="card step" data-title="Health insurance" data-for="insurance both">
   <h2>Health insurance</h2>
   <p class="sub">We size cover as a base floater plus a super top-up. Employer cover is noted but not counted, since it ends if you change jobs.</p>
@@ -172,7 +172,7 @@ button:disabled{opacity:.5;cursor:wait}
   </div>
 </section>
 
-<!-- STEP: TERM LIFE (insurance/both) -->
+<!-- STEP: TERM LIFE -->
 <section class="card step" data-title="Term life insurance" data-for="insurance both">
   <h2>Term life insurance</h2>
   <p class="sub">Term cover protects your family's income if you are not around.</p>
@@ -185,14 +185,14 @@ button:disabled{opacity:.5;cursor:wait}
   </div>
 </section>
 
-<!-- STEP: GOALS (invest/both) -->
+<!-- STEP: GOALS -->
 <section class="card step" data-title="Your life goals" data-for="invest both" id="goalsStep">
   <h2>Your life goals</h2>
   <p class="sub">Tap the goals that apply to you. Enter the cost in today's rupees. We adjust for inflation.</p>
   <div id="goals"></div>
 </section>
 
-<!-- STEP: RISK PROFILE (invest/both) -->
+<!-- STEP: RISK PROFILE -->
 <section class="card step" data-title="Your comfort with risk" data-for="invest both" id="riskStep">
   <h2>Your comfort with risk</h2>
   <p class="sub">There are no right or wrong answers. This tells us how much market ups and downs you can live with.</p>
@@ -208,7 +208,7 @@ button:disabled{opacity:.5;cursor:wait}
     <div class="field"><label class="choice"><input type="checkbox" name="consent_data" required><span>I consent to Blue Dot Finance Advisory collecting and using the information above to prepare my financial plan. I can ask for it to be corrected or deleted at any time.</span></label><div class="msg">Consent is required to submit.</div></div>
     <div class="field"><label class="choice"><input type="checkbox" name="consent_contact" required><span>I agree to be contacted by phone, WhatsApp or email about this plan.</span></label><div class="msg">Please confirm to submit.</div></div>
   </div>
-  <p class="note">Please do not enter PAN, Aadhaar, bank account or card numbers anywhere in this form. Identity verification (KYC) is done separately and securely. This form collects information for planning and is not a recommendation or offer to buy any product.</p>
+  <p class="note">Please do not enter bank account or card numbers anywhere in this form. Identity verification (KYC) is done separately and securely. This form collects information for planning and is not a recommendation or offer to buy any product.</p>
 </section>
 
 <div class="nav"><button type="button" class="sec" id="back">Back</button><button type="button" class="pri" id="next">Continue</button></div>
@@ -223,12 +223,11 @@ button:disabled{opacity:.5;cursor:wait}
 <script>
 /* ============ CONFIG ============ */
 const CONFIG = {
-  // Paste your deployed Google Apps Script Web App URL here
   endpoint: "https://script.google.com/macros/s/AKfycby0uZw-7H5STpglMEWogrDh5WhAr316A6c_yb6cfHOcPNyFja9xOVRYW0Eh7_mn0dk1ug/exec",
   token: "bd-7Kq29xLm4ZpR83vT"
 };
 
-/* ============ GOAL SLOTS (fixed, for clean category tagging) ============ */
+/* ============ GOAL SLOTS ============ */
 const GOALS = [
   {k:"car",   name:"Buy a car",                 def:5,  tip:"Present cost of the car you want"},
   {k:"edu",   name:"Child's higher education",  def:12, tip:"Today's cost of the full course"},
@@ -299,11 +298,18 @@ form.addEventListener("input",()=>{updateConditionals();updateMoney();updateSurp
   const a=num("age"),r=num("retirement_age");const ry=form.elements["g_ret_years"];if(a&&r>a&&ry&&!ry.dataset.touched)ry.value=r-a});
 if(form.elements["g_ret_years"]) form.elements["g_ret_years"].addEventListener("input",e=>e.target.dataset.touched=1);
 
-/* ============ WIZARD ============ */
-function steps(){return $$(".step").filter(s=>{const f=s.dataset.for;return f==="all"||f.split(" ").includes(svc())})}
+/* ============ WIZARD STEP CONTROL ============ */
+function steps(){
+  return $$(".step").filter(s=>{
+    const f=s.dataset.for;
+    return f==="all"||f.split(" ").includes(svc());
+  });
+}
+
 function show(){
-  const st=steps();$$(".step").forEach(s=>s.hidden=true);
-  if(idx>=st.length)idx=st.length-1;
+  const st=steps();
+  $$(".step").forEach(s=>s.hidden=true);
+  if(idx>=st.length) idx=st.length-1;
   st[idx].hidden=false;
   $("#bar").style.width=((idx+1)/st.length*100)+"%";
   $("#stepname").textContent=`Step ${idx+1} of ${st.length}: ${st[idx].dataset.title}`;
@@ -311,14 +317,19 @@ function show(){
   $("#next").textContent=idx===st.length-1?"Submit":"Continue";
   window.scrollTo({top:0,behavior:"smooth"});
 }
+
 function validate(sec){
   let ok=true;
   $$(".field",sec).forEach(f=>f.classList.remove("err"));
   $$("input,select,textarea",sec).forEach(i=>{
     if(i.closest("[hidden]")||i.type==="hidden"||i.classList.contains("hp"))return;
     const f=i.closest(".field");let bad=false;
-    if(i.type==="radio"){if(i.name==="service"||i.name==="target_audience"||i.name.startsWith("risk_")){if(!$(`input[name=${i.name}]:checked`))bad=true}}
-    else if(i.closest(".goal")&&i.closest(".goal:not(.on)"))return;
+    if(i.type==="radio"){
+      if(i.name==="service"||i.name==="target_audience"||i.name.startsWith("risk_")){
+        if(!$(`input[name="${i.name}"]:checked`)) bad=true;
+      }
+    }
+    else if(i.closest(".goal")&&!i.closest(".goal").classList.contains("on"))return;
     else if(i.type==="checkbox"){if(i.required&&!i.checked)bad=true}
     else{
       const goalReq=i.closest(".goal.on")&&/_(cost|years)$/.test(i.name);
@@ -331,14 +342,21 @@ function validate(sec){
   if(!ok){const e=$(".err",sec);if(e)e.scrollIntoView({behavior:"smooth",block:"center"})}
   return ok;
 }
-$("#back").onclick=()=>{idx=Math.max(0,idx-1);show()};
+
+$("#back").onclick=()=>{idx=Math.max(0,idx-1);show();};
 $("#next").onclick=async()=>{
   const st=steps(),sec=st[idx];
-  if(!validate(sec))return;
-  if(idx<st.length-1){idx++;updateConditionals();show();return}
+  if(!validate(sec)) return;
+  if(idx < st.length-1){
+    idx++;
+    updateConditionals();
+    show();
+    return;
+  }
   await submit();
 };
-$$('input[name=service]').forEach(r=>r.addEventListener("change",()=>{updateConditionals()}));
+
+$$('input[name=service]').forEach(r=>r.addEventListener("change",()=>{updateConditionals();}));
 
 /* ============ BOOK A CALL SUBMISSION ============ */
 async function handleBookCall() {
@@ -414,7 +432,7 @@ async function submit(){
     await fetch(CONFIG.endpoint,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(d)});
     finish(d);
   }catch(e){
-    if(!CONFIG.endpoint){ // Test mode: let you download the data
+    if(!CONFIG.endpoint){ 
       const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:"application/json"}));
       a.download="test-submission.json";a.click();finish(d);
     }else{btn.disabled=false;btn.textContent="Submit";alert("Could not submit. Please check your internet and try again.")}
